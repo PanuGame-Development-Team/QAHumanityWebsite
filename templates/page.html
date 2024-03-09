@@ -1,37 +1,25 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>{{article.title}}-青中人文站</title>
-        <meta charset="utf-8">
-        <link rel="stylesheet" href="/static/Bootstrap4.3.1/bootstrap.min.css">
-        <script src="/static/Bootstrap4.3.1/jquery.min.js"></script>
-        <script src="/static/Bootstrap4.3.1/popper.min.js"></script>
-        <script src="/static/Bootstrap4.3.1/bootstrap.min.js"></script>
-    </head>
-    <body>
-        <div class="container">
-            <img src="{{article.jumimg}}" width="100%"/><br><br>
-            <center><h1 id="default">{{article.title}}</h1></center>
-            <span class="text-muted float-right">{{article.author}} 于 {{article.time.strftime("%Y/%m/%d %H:%M")}} 发布</span><br><hr>
-            <div class="row">
-                <div class="col-sm-8">
-                    <div class="border rounded h-100 p-3">{{article.html|tag_format(article.theme)|safe}}</div>
-                </div>
-                <div class="col-sm-4">
-                    <ul class="list-group">
-                        <li class="list-group-item">最新发布</li>
-                        {%for art in newest%}
-                        <li class="list-group-item">
-                            <a href="/?id={{art.id}}"><h3>{{art.title}}</h3></a>
-                            <p>{{art.html|del_tag|truncate(30,killwords=True)}}……</p>
-                            <span class="text-muted">{{art.author}} 于 {{art.time.strftime("%Y/%m/%d %H:%M")}} 发布</span>
-                        </li>
-                        {%else%}
-                        <li class="list-group-item">暂无文章</li>
-                        {%endfor%}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </body>
-</html>
+{%extends "_base.html"%}
+{%block contents%}
+<img src="{{article.jumimg}}" width="100%"/><br><br>
+<center><h1 id="default">{{article.title}}</h1></center>
+<span class="text-muted float-right"><span class="mr-4">{{article.count}}次浏览</span>{{article.author}} 于 {{article.time.strftime("%Y/%m/%d %H:%M")}} 发布</span><br><hr>
+<div class="row">
+    <div class="col-sm-8">
+        <div class="border rounded h-100 p-3">{{article.html|tag_format(article.theme)|safe}}</div>
+    </div>
+    <div class="col-sm-4">
+        <ul class="list-group">
+            <li class="list-group-item">最新发布</li>
+            {%for art in newest%}
+            <li class="list-group-item">
+                <a href="/?id={{art.id}}"><h3>{{art.title}}</h3></a>
+                <p>{{art.html|del_tag|truncate(30,killwords=True)}}……</p>
+                <span class="text-muted">{{art.author}} 于 {{art.time.strftime("%Y/%m/%d %H:%M")}} 发布</span>
+            </li>
+            {%else%}
+            <li class="list-group-item">暂无文章</li>
+            {%endfor%}
+        </ul>
+    </div>
+</div>
+{%endblock%}

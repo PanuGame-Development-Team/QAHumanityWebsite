@@ -1,0 +1,28 @@
+{%extends '_base.html'%}
+{%block contents%}
+<div class="row">
+    <div class="col-sm-4">
+        <ul class="list-group">
+            <li class="list-group-item"><center><img src="/static/user.jpg" style="width: 50%;" class="rounded"></center></li>
+            <li class="list-group-item">姓名：<span class="float-right">{{author.realname}}</span></li>
+            <li class="list-group-item">学号：<span class="float-right">{{author.id}}</span></li>
+            <li class="list-group-item">已发布：<span class="float-right">{{author.count}}篇</span></li>
+        </ul>
+    </div>
+    <div class="col-sm-8">
+        <div class="row">
+            {%for article in articles%}
+            <div class="col-sm-4">
+                <div class="card mb-3">
+                    <img class="card-img-top" src="{{article.jumimg}}" style="height: 150px;">
+                    <div class="card-body">
+                        <a class="card-title h5" href="/?id={{article.id}}">{{article.title}}</a><br>
+                        <span class="text-muted float-right">{{article.author}} 于 {{article.time.strftime("%Y/%m/%d %H:%M")}} 发布</span>
+                    </div>
+                </div>
+            </div>
+            {%endfor%}
+        </div>
+    </div>
+</div>
+{%endblock%}
