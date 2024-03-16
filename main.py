@@ -62,6 +62,8 @@ def login():
         password = form.password.data
         try:
             user = User.query.get(int(yxid))
+        except ValueError:
+            user = ExUser.query.filter(ExUser.name == yxid).first()
         except:
             abort(404)
         if user:
@@ -76,8 +78,12 @@ def login():
         else:
             res = yx_login(yxid,password)
             if res["status"] == "success":
-                newuser = User()
-                newuser.id = int(yxid)
+                try:
+                    newuser = User()
+                    newuser.id = int(yxid)
+                except ValueError:
+                    newuser = ExUser()
+                    newuser.name = yxid
                 newuser.realname = res["data"]["userName"]
                 newuser.passwd = password
                 db.session.add(newuser)
@@ -129,6 +135,11 @@ def author():
             abort(404)
         if author:
             articles = Article.query.filter(Article.author == author.realname).order_by(Article.id.desc()).all()
+        else:
+            author = ExUser.query.get(int(request.args.get("id")))
+            if author:
+                articles = Article.query.filter(Article.author == author.realname).order_by(Article.id.desc()).all()
+        if author:
             return render_template("author.html",author=author,articles=articles,**dic)
     abort(404)
 @app.route("/recommend/",methods=["GET"])

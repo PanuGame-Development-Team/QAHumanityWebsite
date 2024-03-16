@@ -1,0 +1,5 @@
+__pycache__/
+/项目问题与改进方案.ods
+/db.sqlite3
+/instance
+/init_db.py

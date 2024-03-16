@@ -2,12 +2,14 @@ from main import *
 with app.app_context():
     db.drop_all()
     db.create_all()
-    a = Article()
-    a.title = "title"
-    a.html = """<button class="btn btn-{theme}">点我</button>"""
-    a.jumimg = ""
-    a.theme = 1
-    a.author = "author"
-    a.jumimg = "/static/upload/1.jpg"
-    db.session.add(a)
+    user1 = User()
+    user1.id = 23061323
+    user1.passwd = "123456"
+    user1.realname = "吴尚卿"
+    user2 = ExUser()
+    user2.name = "gaoyu"
+    user2.realname = "高宇"
+    user2.passwd = "123456"
+    db.session.add(user1)
+    db.session.add(user2)
     db.session.commit()
