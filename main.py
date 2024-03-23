@@ -6,6 +6,7 @@ from forms import *
 from markdown import markdown
 from lib import *
 from model import *
+from uuid import uuid4
 app = Flask(APP_NAME)
 app.secret_key = APP_SECRETKEY
 for config in APP_CONFIG:
@@ -25,15 +26,15 @@ def tagf(html,themeid):
     return html.format(theme=theme)
 @app.template_filter("del_tag")
 def deltag(html):
-    return html.translate({ord(i):None for i in "abcdefghijklmnopqrstuvwxyz1234567890 !-\"'<>/%\{\}=#.:"})
+    return html.translate({ord(i):None for i in "abcdefghijklmnopqrstuvwxyz1234567890 !-\"'<>/%\{\}=#.:;"})
 def render_markdown(string):
     return markdown(string,extensions=mdmodules,extension_configs=mdconfigs)
 @app.route("/",methods=["GET"])
 def index():
     if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid")}
+        dic = {"user":session.get("user"),"uid":session.get("uid"),"version":APP_VERSION}
     else:
-        dic = {}
+        dic = {"version":APP_VERSION}
     try:
         id = int(request.args.get("id",-1))
     except ValueError:
@@ -97,40 +98,66 @@ def login():
             else:
                 flash("登录失败，可能因为密码错误或无法连接云校","danger")
                 return redirect("/login/")
-    return render_template("login.html",form=form)
+    return render_template("login.html",form=form,version=APP_VERSION)
 @app.route("/write/",methods=["GET","POST"])
 def write():
     if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid")}
+        dic = {"user":session.get("user"),"uid":session.get("uid"),"version":APP_VERSION}
     else:
         return redirect("/login/")
-    form = WriteForm()
-    if form.validate_on_submit():
-        title = form.title.data
-        md = form.md.data
-        theme = form.theme.data
-        jumimg = form.jumimg.data
-        author = session.get("user")
-        time = datetime.now()
-        article = Article()
-        article.title = title
-        article.html = render_markdown(md)
-        article.theme = theme
-        article.jumimg = jumimg
-        article.author = author
-        article.time = time
+    if request.method == "GET":
+        return render_template("write.html",**dic)
+    if "type" in request.form:
+        if request.form["type"] == "0" and lin(["title","md","theme","jumimg"],request.form):
+            title = request.form["title"]
+            md = request.form["md"]
+            theme = int(request.form["theme"])
+            jumimg = request.form["jumimg"]
+            author = session.get("user")
+            time = datetime.now()
+            article = Article()
+            article.title = title
+            article.html = render_markdown(md)
+            article.theme = theme
+            article.jumimg = jumimg
+            article.author = author
+            article.time = time
+        elif request.form["type"] == "1" and lin(["title","jumimg"],request.form) and "files" in request.files:
+            title = request.form["title"]
+            jumimg = request.form["jumimg"]
+            files = request.files.getlist("files")
+            author = session.get("user")
+            html = ""
+            for file in files:
+                fileext = file.filename.strip().split(".")[-1].lower()
+                if fileext in ["jpg","png","jpeg","gif","mp4","mov"]:
+                    uuid = uuid4().hex
+                    file.save(open(f"static/uploads/{uuid}.{fileext}","wb"))
+                    if fileext in ["jpg","png","jpeg","gif"]:
+                        html += f"<img style=\"width:100%;\" src=\"/static/uploads/{uuid}.{fileext}\"/>"
+                    else:
+                        html += f"<video style=\"width:100%;\" src=\"/static/uploads/{uuid}.{fileext}\"/>"
+            time = datetime.now()
+            article = Article()
+            article.title = title
+            article.html = html
+            article.theme = 0
+            article.author = author
+            article.time = time
+        else:
+            abort(404)
         User.query.filter(User.realname == author).update({"count":User.count + 1})
         db.session.add(article)
         db.session.commit()
         flash("发布成功","success")
         return redirect(f"/?id={article.id}")
-    return render_template("write.html",form=form,**dic)
+    abort(404)
 @app.route("/author/",methods=["GET"])
 def author():
     if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid")}
+        dic = {"user":session.get("user"),"uid":session.get("uid"),"version":APP_VERSION}
     else:
-        dic = {}
+        dic = {"version":APP_VERSION}
     if "id" in request.args:
         try:
             author = User.query.get(int(request.args.get("id")))
@@ -162,7 +189,7 @@ def recommend():
 @app.route("/change/",methods=["GET","POST"])
 def change():
     if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid")}
+        dic = {"user":session.get("user"),"uid":session.get("uid"),"version":APP_VERSION}
     else:
         flash("请先登录","warning")
         return redirect("/login/")
@@ -172,25 +199,37 @@ def change():
         except ValueError:
             abort(404)
     if article and article.author == dic["user"]:
-        form = WriteForm()
-        if form.validate_on_submit():
-            title = form.title.data
-            md = form.md.data
-            theme = form.theme.data
-            jumimg = form.jumimg.data
-            article.title = title
-            article.html = render_markdown(md)
-            article.theme = theme
-            article.jumimg = jumimg
-            db.session.commit()
-            flash("修改成功","success")
-            return redirect(f"/?id={article.id}")
-        form.title.default = article.title
-        form.md.default = article.html
-        form.theme.default = article.theme
-        form.jumimg.default = article.jumimg
-        form.process()
-        return render_template("write.html",form=form,**dic)
+        if request.method == "GET":
+            return render_template("write.html",**dic,basetext=article.html,basetitle=article.title,basejumimg=article.jumimg)
+        if "type" in request.form:
+            if request.form["type"] == "0" and lin(["title","md","theme","jumimg"],request.form):
+                title = request.form["title"]
+                md = request.form["md"]
+                theme = int(request.form["theme"])
+                jumimg = request.form["jumimg"]
+                article.title = title
+                article.html = render_markdown(md)
+                article.theme = theme
+                article.jumimg = jumimg
+            elif request.form["type"] == "1" and lin(["title","jumimg"],request.form) and "files" in request.files:
+                title = request.form["title"]
+                jumimg = request.form["jumimg"]
+                files = request.files.getlist("files")
+                html = ""
+                for file in files:
+                    fileext = file.filename.strip().split(".")[-1].lower()
+                    if fileext in ["jpg","png","jpeg","gif","mp4","mov"]:
+                        uuid = uuid4().hex
+                        file.save(open(f"static/uploads/{uuid}.{fileext}","wb"))
+                        if fileext in ["jpg","png","jpeg","gif"]:
+                            html += f"<img style=\"width:100%;\" src=\"/static/uploads/{uuid}.{fileext}\"/>"
+                        else:
+                            html += f"<video style=\"width:100%;\" src=\"/static/uploads/{uuid}.{fileext}\"/>"
+                article.title = title
+                article.html = html
+                article.jumimg = jumimg
+            else:
+                abort(404)
     elif article:
         flash("您不能修改别人发布的文章","danger")
         return redirect(f"/?id={article.id}")
@@ -217,9 +256,9 @@ def delete():
 @app.route("/about/",methods=["GET"])
 def about():
     if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid")}
+        dic = {"user":session.get("user"),"uid":session.get("uid"),"version":APP_VERSION}
     else:
-        dic = {}
+        dic = {"version":APP_VERSION}
     return render_template("about.html",**dic,fluid=True)
 if __name__ == "__main__":
     app.run(HOST,PORT,DEBUG)

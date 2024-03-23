@@ -57,3 +57,10 @@ def get_captcha_code():
         return {'status': 'timeout', 'msg': '请求超时', 'data': None}
     result = result.json()
     return result['data']
+
+#lib
+def lin(la:list,lb:list):
+    for i in la:
+        if not i in lb:
+            return False
+    return True
