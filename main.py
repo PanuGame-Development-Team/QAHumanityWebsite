@@ -41,10 +41,11 @@ def index():
         abort(404)
     article = Article.query.get(id)
     if article:
-        newest = Article.query.order_by(Article.id.desc()).limit(10).all()
         Article.query.get(id).count += 1
         db.session.commit()
-        return render_template("page.html",article=article,newest=newest,**dic)
+        newest = Article.query.order_by(Article.id.desc()).limit(10).all()
+        comments = Comment.query.filter(Comment.article == id).order_by(Comment.id.desc()).limit(20).all()
+        return render_template("page.html",article=article,newest=newest,comments=comments,**dic)
     elif not "id" in request.args:
         newest = Article.query.order_by(Article.id.desc()).limit(12).all()
         hot = Article.query.order_by(Article.count.desc()).limit(12).all()
@@ -255,6 +256,28 @@ def delete():
     elif article:
         flash("您不能删除别人发布的文章","danger")
         return redirect("/")
+    abort(404)
+@app.route("/comment/",methods=["POST"])
+def comment():
+    if not session.get("logged_in"):
+        flash("请先登录","warning")
+        return redirect("/login/")
+    if "id" in request.args:
+        try:
+            article = Article.query.get(int(request.args.get("id")))
+        except ValueError:
+            abort(404)
+    if article:
+        if "comment" in request.form:
+            com = request.form.get("comment")
+            comment = Comment()
+            comment.article = article.id
+            comment.comment = com
+            comment.author = session.get("user")
+            db.session.add(comment)
+            db.session.commit()
+            flash("评论成功","success")
+            return redirect(f"/?id={article.id}")
     abort(404)
 @app.route("/about/",methods=["GET"])
 def about():

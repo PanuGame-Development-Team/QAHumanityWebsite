@@ -26,3 +26,9 @@ class ExUser(db.Model):
     passwd = db.Column(db.Unicode(256))
     realname = db.Column(db.Unicode(32))
     count = db.Column(db.Integer,default=0)
+class Comment(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    comment = db.Column(db.Unicode(128))
+    time = db.Column(db.DateTime,default=datetime.now())
+    article = db.Column(db.Integer,db.ForeignKey('article.id'))
+    author = db.Column(db.Unicode(16))

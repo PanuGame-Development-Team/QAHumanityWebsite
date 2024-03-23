@@ -5,13 +5,13 @@
     <p>作为青岛中学七年级人文的交流网站，欢迎各位七年级同学在此交流。</p>
 </div>
 <div class="row">
-    <div class="col-sm-8">
+    <div class="col-sm-9">
         <h3>好文推荐>></h3>
         <div class="row">
             {%for article in recommend%}
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <div class="card mb-3">
-                    <img class="card-img-top" src="{{article.jumimg}}" style="height: 150px;">
+                    <img class="card-img-top" src="{{article.jumimg}}" style="height: 120px;">
                     <div class="card-body">
                         <a class="card-title h5" href="/?id={{article.id}}">{{article.title}}</a><br>
                         <span class="text-muted float-right">作者：{{article.author}}</span>
@@ -23,9 +23,9 @@
         <h3>热门文章>></h3>
         <div class="row">
             {%for article in hot%}
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <div class="card mb-3">
-                    <img class="card-img-top" src="{{article.jumimg}}" style="height: 150px;">
+                    <img class="card-img-top" src="{{article.jumimg}}" style="height: 120px;">
                     <div class="card-body">
                         <a class="card-title h5" href="/?id={{article.id}}">{{article.title}}</a><br>
                         <span class="text-muted float-right">作者：{{article.author}}</span>
@@ -37,9 +37,9 @@
         <h3>最新发布>></h3>
         <div class="row">
             {%for article in newest%}
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <div class="card mb-3">
-                    <img class="card-img-top" src="{{article.jumimg}}" style="height: 150px;">
+                    <img class="card-img-top" src="{{article.jumimg}}" style="height: 120px;">
                     <div class="card-body">
                         <a class="card-title h5" href="/?id={{article.id}}">{{article.title}}</a><br>
                         <span class="text-muted float-right">作者：{{article.author}}</span>
@@ -49,8 +49,8 @@
             {%endfor%}
         </div>
     </div>
-    <div class="col-sm-4">
-        <h3>高产作者排行榜>></h3>
+    <div class="col-sm-3">
+        <h3>高产作者>></h3>
         <ul class="list-group">
             {%for author in authors%}
                 <li class="list-group-item"><a href="/author/?id={{author.id}}">{{author.realname}}</a><span class="float-right">{{author.count}}篇</span></li>

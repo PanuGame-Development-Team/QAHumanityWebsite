@@ -5,7 +5,15 @@
 <span class="text-muted float-right"><span class="mr-4">{{article.count}}次浏览</span>{{article.author}} 于 {{article.time.strftime("%Y/%m/%d %H:%M")}} 发布{%if article.author == user%}<a class="btn btn-primary mr-2 ml-2" href="/change/?id={{article.id}}">修改</a><a class="btn btn-danger" href="/delete/?id={{article.id}}">删除</a>{%endif%}</span><br><hr>
 <div class="row">
     <div class="col-sm-8">
-        <div class="border rounded h-100 p-3">{{article.html|tag_format(article.theme)|safe}}</div>
+        <div class="border rounded p-3 mb-3">{{article.html|tag_format(article.theme)|safe}}</div>
+        <ul class="list-group">
+            {%if user%}<li class="list-group-item"><form action="/comment/?id={{article.id}}" method="post" class="form-inline"><div class="row w-100"><div class="col-sm-10"><input type="text" name="comment" placeholder="这一刻的想法，评论一下" class="form-control w-100"></div><div class="col-sm-2"><button type="submit" class="btn btn-primary">提交</button></div></div></form></li>{%endif%}
+            {%for comment in comments%}
+            <li class="list-group-item">{{comment.author}}：{{comment.comment}}<span class="float-right text-muted">{{comment.time.strftime("%Y/%m/%d %H:%M")}}</span></li>
+            {%else%}
+            <li class="list-group-item">暂无评论</li>
+            {%endfor%}
+        </ul>
     </div>
     <div class="col-sm-4">
         <ul class="list-group">
