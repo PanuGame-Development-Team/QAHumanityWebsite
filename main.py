@@ -230,6 +230,9 @@ def change():
                 article.jumimg = jumimg
             else:
                 abort(404)
+            db.session.commit()
+            flash("修改成功","success")
+            return redirect(f"/?id={article.id}")
     elif article:
         flash("您不能修改别人发布的文章","danger")
         return redirect(f"/?id={article.id}")
