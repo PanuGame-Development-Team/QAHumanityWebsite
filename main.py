@@ -137,17 +137,19 @@ def write():
                     if fileext in ["jpg","png","jpeg","gif"]:
                         html += f"<img style=\"width:100%;\" src=\"/static/uploads/{uuid}.{fileext}\"/>"
                     else:
-                        html += f"<video style=\"width:100%;\" src=\"/static/uploads/{uuid}.{fileext}\"/>"
+                        html += f"<video controls style=\"width:100%;\" src=\"/static/uploads/{uuid}.{fileext}\"></video>"
             time = datetime.now()
             article = Article()
             article.title = title
             article.html = html
             article.theme = 0
+            article.jumimg = jumimg
             article.author = author
             article.time = time
         else:
             abort(404)
         User.query.filter(User.realname == author).update({"count":User.count + 1})
+        ExUser.query.filter(ExUser.realname == author).update({"count":ExUser.count + 1})
         db.session.add(article)
         db.session.commit()
         flash("发布成功","success")
@@ -225,7 +227,7 @@ def change():
                         if fileext in ["jpg","png","jpeg","gif"]:
                             html += f"<img style=\"width:100%;\" src=\"/static/uploads/{uuid}.{fileext}\"/>"
                         else:
-                            html += f"<video style=\"width:100%;\" src=\"/static/uploads/{uuid}.{fileext}\"/>"
+                            html += f"<video controls style=\"width:100%;\" src=\"/static/uploads/{uuid}.{fileext}\"></video>"
                 article.title = title
                 article.html = html
                 article.jumimg = jumimg
@@ -250,6 +252,8 @@ def delete():
             abort(404)
     if article and article.author == session.get("user"):
         db.session.delete(article)
+        User.query.filter(User.realname == article.author).update({"count":User.count - 1})
+        ExUser.query.filter(ExUser.realname == article.author).update({"count":ExUser.count - 1})
         db.session.commit()
         flash("删除成功","success")
         return redirect("/")
