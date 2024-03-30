@@ -2,6 +2,7 @@ from flask import Flask,request,redirect,render_template,abort,session,flash
 from flask_bootstrap import Bootstrap
 from settings import *
 from datetime import datetime
+from werkzeug.security import generate_password_hash,check_password_hash
 from forms import *
 from markdown import markdown
 from lib import *
@@ -69,7 +70,7 @@ def login():
         except:
             abort(404)
         if user:
-            if password == user.passwd:
+            if check_password_hash(user.passwd,password):
                 session["logged_in"] = True
                 session["user"] = user.realname
                 session["uid"] = user.id
@@ -88,7 +89,7 @@ def login():
                     newuser = ExUser()
                     newuser.name = yxid
                 newuser.realname = res["data"]["userName"]
-                newuser.passwd = password
+                newuser.passwd = generate_password_hash(password)
                 db.session.add(newuser)
                 db.session.commit()
                 session["logged_in"] = True
