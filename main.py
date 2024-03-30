@@ -46,7 +46,7 @@ def index():
         db.session.commit()
         newest = Article.query.order_by(Article.id.desc()).limit(10).all()
         comments = Comment.query.filter(Comment.article == id).order_by(Comment.id.desc()).limit(20).all()
-        return render_template("page.html",article=article,newest=newest,comments=comments,**dic)
+        return render_template("page.html",article=article,newest=newest,comments=comments,teachers=TEACHERS,**dic)
     elif not "id" in request.args:
         newest = Article.query.order_by(Article.id.desc()).limit(12).all()
         hot = Article.query.order_by(Article.count.desc()).limit(12).all()
@@ -202,7 +202,7 @@ def change():
             article = Article.query.get(int(request.args.get("id")))
         except ValueError:
             abort(404)
-    if article and article.author == dic["user"]:
+    if article and (article.author == dic["user"] or dic["user"] in TEACHERS):
         if request.method == "GET":
             return render_template("write.html",**dic,basetext=article.html,basetitle=article.title,basejumimg=article.jumimg)
         if "type" in request.form:
@@ -251,7 +251,7 @@ def delete():
             article = Article.query.get(int(request.args.get("id")))
         except ValueError:
             abort(404)
-    if article and article.author == session.get("user"):
+    if article and (article.author == session.get("user") or session.get("user") in TEACHERS):
         db.session.delete(article)
         User.query.filter(User.realname == article.author).update({"count":User.count - 1})
         ExUser.query.filter(ExUser.realname == article.author).update({"count":ExUser.count - 1})
