@@ -27,7 +27,7 @@ def tagf(html,themeid):
     return html.format(theme=theme)
 @app.template_filter("del_tag")
 def deltag(html):
-    return html.translate({ord(i):None for i in "abcdefghijklmnopqrstuvwxyz1234567890 !-\"'<>/%\{\}=#.:;"})
+    return html.translate({ord(i):None for i in "abcdefghijklmnopqrstuvwxyz1234567890 !-\"'<>/%\{\}=#.:;_"})
 def render_markdown(string):
     return markdown(string,extensions=mdmodules,extension_configs=mdconfigs)
 @app.route("/",methods=["GET"])
@@ -121,7 +121,7 @@ def write():
             article.title = title
             article.html = render_markdown(md)
             article.theme = theme
-            article.jumimg = jumimg
+            article.jumimg = jumimg if jumimg else "/static/favicon.jpg"
             article.author = author
             article.time = time
         elif request.form["type"] == "1" and lin(["title","jumimg"],request.form) and "files" in request.files:
@@ -144,7 +144,7 @@ def write():
             article.title = title
             article.html = html
             article.theme = 0
-            article.jumimg = jumimg
+            article.jumimg = jumimg if jumimg else "/static/favicon.jpg"
             article.author = author
             article.time = time
         else:
