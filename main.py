@@ -4,7 +4,6 @@ from settings import *
 from datetime import datetime
 from werkzeug.security import generate_password_hash,check_password_hash
 from forms import *
-from markdown import markdown
 from lib import *
 from model import *
 from uuid import uuid4
@@ -14,22 +13,8 @@ for config in APP_CONFIG:
     app.config[config] = APP_CONFIG[config]
 db.init_app(app)
 boot = Bootstrap(app)
-@app.template_filter("tag_format")
-def tagf(html,themeid):
-    if themeid == 0:
-        theme = "primary"
-    elif themeid == 1:
-        theme = "danger"
-    elif themeid == 2:
-        theme = "warning"
-    elif themeid == 3:
-        theme = "success"
-    return html.format(theme=theme)
-@app.template_filter("del_tag")
-def deltag(html):
-    return html.translate({ord(i):None for i in "abcdefghijklmnopqrstuvwxyz1234567890 !-\"'<>/%\{\}=#.:;_"})
-def render_markdown(string):
-    return markdown(string,extensions=mdmodules,extension_configs=mdconfigs)
+app.add_template_filter(tagf,"tag_format")
+app.add_template_filter(deltag,"del_tag")
 @app.route("/",methods=["GET"])
 def index():
     if session.get("logged_in"):

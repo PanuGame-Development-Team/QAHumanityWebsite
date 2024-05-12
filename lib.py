@@ -59,8 +59,28 @@ def get_captcha_code():
     return result['data']
 
 #lib
+from markdown import markdown
+from settings import *
+import bs4
 def lin(la:list,lb:list):
     for i in la:
         if not i in lb:
             return False
     return True
+def tagf(html,themeid):
+    if themeid == 0:
+        theme = "primary"
+    elif themeid == 1:
+        theme = "danger"
+    elif themeid == 2:
+        theme = "warning"
+    elif themeid == 3:
+        theme = "success"
+    return html.format(theme=theme)
+def render_markdown(string):
+    return markdown(string,extensions=mdmodules,extension_configs=mdconfigs)
+# def deltag(html):
+#     return html.translate({ord(i):None for i in "abcdefghijklmnopqrstuvwxyz1234567890 !-\"'<>/%\{\}=#.:;_"})
+def deltag(html):
+    bs = bs4.BeautifulSoup(html,"html.parser")
+    return bs.getText()
