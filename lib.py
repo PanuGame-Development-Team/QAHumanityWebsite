@@ -62,6 +62,9 @@ def get_captcha_code():
 from markdown import markdown
 from settings import *
 import bs4
+from model import *
+from uuid import uuid4
+from werkzeug.security import generate_password_hash,check_password_hash
 def lin(la:list,lb:list):
     for i in la:
         if not i in lb:
@@ -84,3 +87,20 @@ def render_markdown(string):
 def deltag(html):
     bs = bs4.BeautifulSoup(html,"html.parser")
     return bs.getText()
+def getuser_up(username,password):
+    pass
+def getuser_id(uid):
+    user = ExUser.query.filter(ExUser.name == str(uid)).first()
+    if not user:
+        try:
+            user = User.query.filter(User.id == int(uid)).first()
+        except:
+            user = False
+    return user
+def save_file(img,allowed):
+    fileext = img.filename.strip().split(".")[-1].lower()
+    if fileext in allowed:
+        uuid = uuid4().hex
+        img.save(open(os.path.join(ABDIR,f"static/uploads/{uuid}.{fileext}"),"wb"))
+        return f"/static/uploads/{uuid}.{fileext}"
+    return None

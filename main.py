@@ -2,17 +2,17 @@ from flask import Flask,request,redirect,render_template,abort,session,flash
 from flask_bootstrap import Bootstrap
 from settings import *
 from datetime import datetime
-from werkzeug.security import generate_password_hash,check_password_hash
 from forms import *
 from lib import *
 from model import *
-from uuid import uuid4
+import mods.mod_edit
 app = Flask(APP_NAME)
 app.secret_key = APP_SECRETKEY
 for config in APP_CONFIG:
     app.config[config] = APP_CONFIG[config]
 db.init_app(app)
 boot = Bootstrap(app)
+app.register_blueprint(mods.mod_edit.app)
 app.add_template_filter(tagf,"tag_format")
 app.add_template_filter(deltag,"del_tag")
 @app.route("/",methods=["GET"])
@@ -86,6 +86,11 @@ def login():
                 flash("登录失败，可能因为密码错误或无法连接云校","danger")
                 return redirect("/login/")
     return render_template("login.html",form=form,version=APP_VERSION)
+@app.route("/logout/",methods=["GET"])
+def logout():
+    session.clear()
+    flash("登出成功","success")
+    return redirect("/")
 @app.route("/write/",methods=["GET","POST"])
 def write():
     if session.get("logged_in"):

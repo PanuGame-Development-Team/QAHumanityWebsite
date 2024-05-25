@@ -17,12 +17,16 @@ class Article(db.Model):
     recommend = db.Column(db.Boolean,default=False)
 class User(db.Model):
     id = db.Column(db.Integer,primary_key=True)
-    passwd = db.Column(db.Unicode(256))
+    nickname = db.Column(db.Unicode(32))
+    headimg = db.Column(db.Unicode(32))
+    passwd = db.Column(db.Unicode(256),default="/static/user.jpg")
     realname = db.Column(db.Unicode(32))
     count = db.Column(db.Integer,default=0)
 class ExUser(db.Model):
     id = db.Column(db.Integer,primary_key=True)
-    name = db.Column(db.Unicode(32))
+    name = db.Column(db.Unicode(32),index=True)
+    nickname = db.Column(db.Unicode(32))
+    headimg = db.Column(db.Unicode(32),default="/static/user.jpg")
     passwd = db.Column(db.Unicode(256))
     realname = db.Column(db.Unicode(32))
     count = db.Column(db.Integer,default=0)
