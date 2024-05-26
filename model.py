@@ -15,6 +15,7 @@ class Article(db.Model):
     author = db.Column(db.Unicode(16))
     time = db.Column(db.DateTime,default=datetime.now())
     recommend = db.Column(db.Boolean,default=False)
+    delete = db.Column(db.Boolean,default=False)
 class User(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     nickname = db.Column(db.Unicode(32))

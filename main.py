@@ -26,16 +26,16 @@ def index():
     except ValueError:
         abort(404)
     article = Article.query.get(id)
-    if article:
+    if article and (not article.delete or session.get("user") in TEACHERS):
         Article.query.get(id).count += 1
         db.session.commit()
-        newest = Article.query.order_by(Article.id.desc()).limit(10).all()
+        newest = Article.query.filter(Article.delete == False).order_by(Article.id.desc()).limit(10).all()
         comments = Comment.query.filter(Comment.article == id).order_by(Comment.id.desc()).limit(20).all()
         return render_template("page.html",article=article,newest=newest,comments=comments,teachers=TEACHERS,**dic)
     elif not "id" in request.args:
-        newest = Article.query.order_by(Article.id.desc()).limit(12).all()
-        hot = Article.query.order_by(Article.count.desc()).limit(12).all()
-        recommend = Article.query.filter(Article.recommend == True).order_by(Article.id.desc()).all()
+        newest = Article.query.filter(Article.delete == False).order_by(Article.id.desc()).limit(12).all()
+        hot = Article.query.filter(Article.delete == False).order_by(Article.count.desc()).limit(12).all()
+        recommend = Article.query.filter(Article.delete == False).filter(Article.recommend == True).order_by(Article.id.desc()).all()
         authors = User.query.order_by(User.count.desc()).limit(10).all()
         return render_template("index.html",newest=newest,hot=hot,authors=authors,recommend=recommend,**dic)
     else:
@@ -153,17 +153,12 @@ def author():
     else:
         dic = {"version":APP_VERSION}
     if "id" in request.args:
-        try:
-            author = User.query.get(int(request.args.get("id")))
-        except ValueError:
-            abort(404)
+        author = getuser_id(int(request.args.get("id")))
         if author:
-            articles = Article.query.filter(Article.author == author.realname).order_by(Article.id.desc()).all()
-        else:
-            author = ExUser.query.get(int(request.args.get("id")))
-            if author:
+            if session.get("user") in TEACHERS:
                 articles = Article.query.filter(Article.author == author.realname).order_by(Article.id.desc()).all()
-        if author:
+            else:
+                articles = Article.query.filter(Article.delete == False).filter(Article.author == author.realname).order_by(Article.id.desc()).all()
             return render_template("author.html",author=author,articles=articles,**dic)
     abort(404)
 @app.route("/recommend/",methods=["GET"])
@@ -190,6 +185,7 @@ def change():
     if "id" in request.args:
         try:
             article = Article.query.get(int(request.args.get("id")))
+            article = article if not article.delete else None
         except ValueError:
             abort(404)
     if article and (article.author == dic["user"] or dic["user"] in TEACHERS):
@@ -239,10 +235,11 @@ def delete():
     if "id" in request.args:
         try:
             article = Article.query.get(int(request.args.get("id")))
+            article = article if not article.delete else None
         except ValueError:
             abort(404)
     if article and (article.author == session.get("user") or session.get("user") in TEACHERS):
-        db.session.delete(article)
+        article.delete = True
         User.query.filter(User.realname == article.author).update({"count":User.count - 1})
         ExUser.query.filter(ExUser.realname == article.author).update({"count":ExUser.count - 1})
         db.session.commit()
@@ -260,6 +257,7 @@ def comment():
     if "id" in request.args:
         try:
             article = Article.query.get(int(request.args.get("id")))
+            article = article if not article.delete else None
         except ValueError:
             abort(404)
     if article:

@@ -2,7 +2,7 @@
 {%block contents%}
 <img src="{{article.jumimg}}" width="100%"/><br><br>
 <center><h1 id="default">{{article.title}}</h1></center>
-<span class="text-muted float-right"><span class="mr-4">{{article.count}}次浏览</span>{{article.author}} 于 {{article.time.strftime("%Y/%m/%d %H:%M")}} 发布{%if article.author == user or user in teachers%}<a class="btn btn-primary mr-2 ml-2" href="/change/?id={{article.id}}">修改</a><a class="btn btn-danger mr-2" href="/delete/?id={{article.id}}">删除</a>{%endif%}{%if user in teachers%}<a class="btn btn-success" href="/recommend/?id={{article.id}}">{%if article.recommend%}取消{%endif%}推荐</a>{%endif%}</span><br><hr>
+<span class="text-muted float-right"><span class="mr-4">{{article.count}}次浏览</span>{{article.author}} 于 {{article.time.strftime("%Y/%m/%d %H:%M")}} 发布{%if article.author == user or user in teachers%}<a class="btn btn-primary mr-2 ml-2" href="/change/?id={{article.id}}">修改</a><a class="btn btn-danger mr-2" href="/delete/?id={{article.id}}">删除</a>{%endif%}{%if article.delete%}<del class="text-danger">已删除</del>{%elif user in teachers%}<a class="btn btn-success" href="/recommend/?id={{article.id}}">{%if article.recommend%}取消{%endif%}推荐</a>{%endif%}</span><br><hr>
 <div class="row">
     <div class="col-sm-8">
         <div class="border rounded p-3 mb-3">{{article.html|tag_format(article.theme)|safe}}</div>

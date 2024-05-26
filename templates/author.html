@@ -22,7 +22,7 @@
                 <div class="card mb-3">
                     <img class="card-img-top" src="{{article.jumimg}}" style="height: 150px;">
                     <div class="card-body">
-                        <a class="card-title h5" href="/?id={{article.id}}">{{article.title}}</a><br>
+                        <a class="card-title h5" href="/?id={{article.id}}">{{article.title}}</a>{%if article.delete%}<del class="text-danger float-right">已删除</del>{%endif%}<br>
                         <span class="text-muted float-right">{{article.author}} 于 {{article.time.strftime("%Y/%m/%d %H:%M")}} 发布</span>
                     </div>
                 </div>
