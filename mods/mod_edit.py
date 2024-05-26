@@ -27,7 +27,10 @@ def conf():
             return redirect(url_for("edit.conf"))
         headimg = request.files.getlist("headimg")[0]
         user.nickname = nickname
-        user.headimg = save_file(headimg,["jpg","png","jpeg","gif"])
+        if headimg.filename:
+            user.headimg = save_file(headimg,["jpg","png","jpeg","gif"])
+        else:
+            user.headimg = "/static/user.jpg"
         user.passwd = generate_password_hash(password2)
         db.session.commit()
         flash("修改成功","success")

@@ -3,7 +3,7 @@
 <div class="row">
     <div class="col-sm-4">
         <ul class="list-group">
-            <li class="list-group-item"><center><img src="{{author.headimg}}" style="width: 50%;" class="rounded"></center></li>
+            <li class="list-group-item"><center><img src="{{author.headimg|default("/static/user.jpg")}}" style="width: 50%;" class="rounded"></center></li>
             <li class="list-group-item">姓名：<span class="float-right">{{author.realname}}</span></li>
             <li class="list-group-item">学号：<span class="float-right">{{author.id}}</span></li>
             <li class="list-group-item">已发布：<span class="float-right">{{author.count}}篇</span></li>
