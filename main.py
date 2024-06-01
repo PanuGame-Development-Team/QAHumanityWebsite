@@ -6,6 +6,7 @@ from forms import *
 from lib import *
 from model import *
 import mods.mod_edit
+import mods.mod_admin
 app = Flask(APP_NAME)
 app.secret_key = APP_SECRETKEY
 for config in APP_CONFIG:
@@ -13,6 +14,7 @@ for config in APP_CONFIG:
 db.init_app(app)
 boot = Bootstrap(app)
 app.register_blueprint(mods.mod_edit.app)
+app.register_blueprint(mods.mod_admin.app)
 app.add_template_filter(tagf,"tag_format")
 app.add_template_filter(deltag,"del_tag")
 @app.route("/",methods=["GET"])

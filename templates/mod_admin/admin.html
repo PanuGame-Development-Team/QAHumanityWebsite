@@ -1,0 +1,27 @@
+{% extends "_base.html" %}
+{%block contents%}
+{%import "mod_admin/_macros.html" as macros%}
+<div class="row">
+    <div class="col-sm-9">
+        <nav>
+            <div class="nav nav-tabs">
+                <a class="nav-item nav-link{%if current == "user"%} active{%endif%}" href="/admin/admin/?db=user">用户</a>
+                <a class="nav-item nav-link{%if current == "article"%} active{%endif%}" href="/admin/admin/?db=article">文章</a>
+                <a class="nav-item nav-link{%if current == "comment"%} active{%endif%}" href="/admin/admin/?db=comment">评论</a>
+            </div>
+        </nav>
+        <div>
+            {{macros.render_table(table)}}
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <ul class="list-group">
+            {%for message in msgqueue%}
+            <li class="list-group-item">{{message}}</li>
+            {%else%}
+            <li class="list-group-item">无消息</li>
+            {%endfor%}
+        </ul>
+    </div>
+</div>
+{%endblock%}

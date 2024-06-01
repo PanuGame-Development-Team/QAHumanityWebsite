@@ -1,0 +1,50 @@
+{% macro render_table(tb) %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            {% for head in tb[0] %}
+            <th>{{head|safe}}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in tb[1:] %}
+        <tr>
+            {% for cont in line %}
+            <td>{{cont|safe}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endmacro %}
+{% macro render_form_text(cont) %}
+<div class="form-group">
+    {{cont.label()}}
+    {%if cont.errors%}
+        {{cont(class="form-control is-invalid")}}
+        <div class="invalid-feedback">
+            {%for error in cont.errors%}
+                <span>{{error}}</span>
+            {%endfor%}
+        </div>
+    {%else%}
+        {{cont(class="form-control")}}
+    {%endif%}
+</div>
+{% endmacro %}
+{% macro render_form_radiocheck(cont) %}
+<div class="form-check">
+    {%if cont.errors%}
+        {{cont(class="form-check-input is-invalid")}}
+        <div class="invalid-feedback">
+            {%for error in cont.errors%}
+                <span>{{error}}</span>
+            {%endfor%}
+        </div>
+    {%else%}
+        {{cont(class="form-check-input")}}
+    {%endif%}
+    <label class="form-check-label">{{cont.label()}}</label>
+</div>
+{% endmacro %}

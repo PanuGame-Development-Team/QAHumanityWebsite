@@ -104,3 +104,17 @@ def save_file(img,allowed):
         img.save(open(os.path.join(ABDIR,f"static/uploads/{uuid}.{fileext}"),"wb"))
         return f"/static/uploads/{uuid}.{fileext}"
     return None
+class MsgQueue:
+    def __init__(self):
+        import pickle
+        self.pickle = pickle
+        self.queue = pickle.load(open("msg.q","rb")) if os.path.isfile("msg.q") else []
+    def push(self,msg):
+        self.queue.append(msg)
+        with open("msg.q","wb") as file:
+            self.pickle.dump(self.queue,file)
+    def pop(self):
+        self.queue.pop(0)
+        with open("msg.q","wb") as file:
+            self.pickle.dump(self.queue,file)
+msgqueue = MsgQueue()
