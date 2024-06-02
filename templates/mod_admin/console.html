@@ -1,0 +1,34 @@
+<div class="row"><div class="col-sm-4" id="cpu"></div><div class="col-sm-4" id="mem"></div><div class="col-sm-4" id="disk"></div></div>
+<script>
+var cpu = document.getElementById("cpu")
+var mem = document.getElementById("mem")
+var disk = document.getElementById("disk")
+function f(){
+    fetch("/admin/data/",{method: "get",mode: "cors"}).then(
+        (response)=>{
+            if(response.ok)
+            {
+                return response.json();
+            }
+            else
+            {
+                cpu.innerHTML = "获取信息失败"
+                mem.innerHTML = "获取信息失败"
+                disk.innerHTML = "获取信息失败"
+            }
+        }
+    ).then((json)=>{
+        cpu.innerHTML = "CPU:" + json.cpu + "%"
+        mem.innerHTML = "MEM:" + json.mem + "%"
+        disk.innerHTML = "DISK:" + json.disk + "%"
+    }).catch(
+        (error)=>{
+            console.log(error)
+            cpu.innerHTML = "获取信息失败"
+            mem.innerHTML = "获取信息失败"
+            disk.innerHTML = "获取信息失败"
+        }
+    )
+};
+var Itv = window.setInterval(f,3000)
+</script>

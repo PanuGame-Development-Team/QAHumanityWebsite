@@ -1,3 +1,4 @@
+from psutil import virtual_memory,cpu_percent,disk_usage
 from flask import *
 from model import *
 from settings import *
@@ -6,6 +7,26 @@ from lib import *
 import sys,os
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)),".."))
 app = Blueprint("admin_mod","admin_mod",url_prefix="/admin")
+@app.route("/console/")
+def console():
+    return render_template("mod_admin/console.html")
+@app.route("/data/")
+def data():
+    if session.get("logged_in"):
+        dic = {"user":session.get("user"),"uid":session.get("uid"),"fluid":True,"version":APP_VERSION}
+        me = getuser_id(int(dic["uid"]))
+    else:
+        flash("您未登录，无法管理站点","danger")
+        return redirect("/")
+    if not me.realname in TEACHERS:
+        msgqueue.push(f"""用户{me.realname}，于{datetime.now().strftime("%Y/%m/%d %H:%M")}时尝试盗取系统信息。""")
+        flash("您无权管理该站点，此事已被通报。","danger")
+        return redirect("/")
+    sys_data = {}
+    sys_data["cpu"] = cpu_percent()
+    sys_data["mem"] = virtual_memory().percent
+    sys_data["disk"] = disk_usage("/").percent
+    return jsonify(sys_data)
 @app.route("/admin/")
 def admin():
     global msgqueue
