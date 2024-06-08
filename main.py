@@ -17,6 +17,7 @@ app.register_blueprint(mods.mod_edit.app)
 app.register_blueprint(mods.mod_admin.app)
 app.add_template_filter(tagf,"tag_format")
 app.add_template_filter(deltag,"del_tag")
+app.add_template_filter(safe_script,"safe_script")
 @app.route("/",methods=["GET"])
 def index():
     if session.get("logged_in"):

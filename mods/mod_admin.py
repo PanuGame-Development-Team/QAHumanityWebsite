@@ -7,10 +7,12 @@ from lib import *
 import sys,os
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)),".."))
 app = Blueprint("admin_mod","admin_mod",url_prefix="/admin")
-@app.route("/console/")
+@app.route("/console",methods=["GET"])
+@app.route("/console/",methods=["GET"])
 def console():
     return render_template("mod_admin/console.html")
-@app.route("/data/")
+@app.route("/data",methods=["GET"])
+@app.route("/data/",methods=["GET"])
 def data():
     if session.get("logged_in"):
         dic = {"user":session.get("user"),"uid":session.get("uid"),"fluid":True,"version":APP_VERSION}
@@ -27,7 +29,8 @@ def data():
     sys_data["mem"] = virtual_memory().percent
     sys_data["disk"] = disk_usage("/").percent
     return jsonify(sys_data)
-@app.route("/admin/")
+@app.route("/admin",methods=["GET"])
+@app.route("/admin/",methods=["GET"])
 def admin():
     global msgqueue
     if session.get("logged_in"):
@@ -65,6 +68,7 @@ def admin():
     mq = msgqueue.queue[:]
     mq.reverse()
     return render_template("mod_admin/admin.html",**dic,current=db,msgqueue=mq,table=table)
+@app.route("/edit/<int:id>",methods=["GET","POST"])
 @app.route("/edit/<int:id>/",methods=["GET","POST"])
 def edit_admin(id):
     dic = {}

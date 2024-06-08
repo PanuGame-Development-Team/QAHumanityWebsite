@@ -11,7 +11,7 @@
             </div>
         </nav>
         <div>
-            {{macros.render_table(table)}}
+            {{macros.render_table(table)|safe_script|safe}}
         </div>
     </div>
     <div class="col-sm-3">
@@ -22,7 +22,7 @@
             <li class="list-group-item">无消息</li>
             {%endfor%}
         </ul>
-        <object width="100%",height="100%" data="/admin/console/">
+        {%include "mod_admin/console.html"%}
     </div>
 </div>
 {%endblock%}

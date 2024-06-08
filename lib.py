@@ -104,6 +104,15 @@ def save_file(img,allowed):
         img.save(open(os.path.join(ABDIR,f"static/uploads/{uuid}.{fileext}"),"wb"))
         return f"/static/uploads/{uuid}.{fileext}"
     return None
+# def safe_script(content):
+#     bs = bs4.BeautifulSoup(content,"html.parser")
+#     for script in bs.find_all("script"):
+#         script.decompose()
+#     for attr in DANGERARGS:
+#         for i in bs.find_all(attrs={attr:True}):
+#             del i[attr]
+#     return bs.__str__()
+safe_script = lambda x:x
 class MsgQueue:
     def __init__(self):
         import pickle
