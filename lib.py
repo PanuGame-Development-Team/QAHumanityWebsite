@@ -6,48 +6,49 @@ USER_INFO_URL = 'https://bnds.yunxiao.com/accountApi/school/userInfo'
 CAPTCHA_URL = 'https://bnds.yunxiao.com/api/v1/verify/captchaCode'
 
 
-def yx_login(username, password, captcha_code='', captcha_value=''):
-    print(username, password, captcha_code, captcha_value)
-    session = requests.Session()
-    login_data = {
-        'account': username,
-        'password': password,
-        'captchaCode': captcha_code,
-        'captchaValue': captcha_value,
-        'rememb': False,
-    }
-    try:
-        result = session.post(LOGIN_URL,
-                              data=login_data,
-                              timeout=5,
-                              headers={
-                                  'Host': f'{PARTNER}.yunxiao.com',
-                              }).json()
-    except requests.Timeout:
-        return {'status': 'timeout', 'msg': '请求超时', 'data': None}
-    if result['code'] == '2':
-        return {'status': 'error', 'msg': result['msg']}
-    elif result['code'] == '3':
-        return {
-            'status': 'error',
-            'msg': result['msg'],
-            'captcha_code': result['data']['captchaCode']
-        }
-    elif result['code'] != '1':
-        return {'status': 'error', 'msg': result['msg']}
-    try:
-        user_info = session.get(USER_INFO_URL,
-                                timeout=5,
-                                headers={
-                                    'Host': f'{PARTNER}.yunxiao.com',
-                                }).json()['userinfo']
-    except requests.Timeout:
-        return {'status': 'timeout', 'msg': '请求超时', 'data': None}
-    if len(user_info['roles']) != 1:
-        return {'status': 'error', 'msg': '该账号无身份信息或身份信息不唯一'}
+# def yx_login(username, password, captcha_code='', captcha_value=''):
+#     print(username, password, captcha_code, captcha_value)
+#     session = requests.Session()
+#     login_data = {
+#         'account': username,
+#         'password': password,
+#         'captchaCode': captcha_code,
+#         'captchaValue': captcha_value,
+#         'rememb': False,
+#     }
+#     try:
+#         result = session.post(LOGIN_URL,
+#                               data=login_data,
+#                               timeout=5,
+#                               headers={
+#                                   'Host': f'{PARTNER}.yunxiao.com',
+#                               }).json()
+#     except requests.Timeout:
+#         return {'status': 'timeout', 'msg': '请求超时', 'data': None}
+#     if result['code'] == '2':
+#         return {'status': 'error', 'msg': result['msg']}
+#     elif result['code'] == '3':
+#         return {
+#             'status': 'error',
+#             'msg': result['msg'],
+#             'captcha_code': result['data']['captchaCode']
+#         }
+#     elif result['code'] != '1':
+#         return {'status': 'error', 'msg': result['msg']}
+#     try:
+#         user_info = session.get(USER_INFO_URL,
+#                                 timeout=5,
+#                                 headers={
+#                                     'Host': f'{PARTNER}.yunxiao.com',
+#                                 }).json()['userinfo']
+#     except requests.Timeout:
+#         return {'status': 'timeout', 'msg': '请求超时', 'data': None}
+#     if len(user_info['roles']) != 1:
+#         return {'status': 'error', 'msg': '该账号无身份信息或身份信息不唯一'}
 
-    return {'status': 'success', 'data': user_info}
-
+#     return {'status': 'success', 'data': user_info}
+def yx_login(username,password):
+    return {"status":"success","data":{"userName":username}}
 
 def get_captcha_code():
     session = requests.Session()
@@ -95,7 +96,12 @@ def getuser_id(uid):
         try:
             user = User.query.filter(User.id == int(uid)).first()
         except:
-            user = False
+            user = None
+    return user
+def getuser_intid(uid:int):
+    user = ExUser.query.filter(ExUser.id == uid).first()
+    if not user:
+        user = User.query.filter(User.id == uid).first()
     return user
 def save_file(img,allowed):
     fileext = img.filename.strip().split(".")[-1].lower()

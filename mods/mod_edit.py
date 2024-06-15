@@ -18,7 +18,7 @@ def conf():
     if request.method == "GET":
         return render_template("mod_conf/conf.html",**dic)
     elif lin(["nickname","password1","password2"],request.form) and lin(["headimg"],request.files):
-        user = getuser_id(dic["uid"])
+        user = getuser_intid(dic["uid"])
         nickname = request.form["nickname"]
         password1 = request.form["password1"]
         password2 = request.form["password2"]

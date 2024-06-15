@@ -16,7 +16,7 @@ def console():
 def data():
     if session.get("logged_in"):
         dic = {"user":session.get("user"),"uid":session.get("uid"),"fluid":True,"version":APP_VERSION}
-        me = getuser_id(int(dic["uid"]))
+        me = getuser_intid(dic["uid"])
     else:
         flash("您未登录，无法管理站点","danger")
         return redirect("/")
@@ -35,7 +35,7 @@ def admin():
     global msgqueue
     if session.get("logged_in"):
         dic = {"user":session.get("user"),"uid":session.get("uid"),"fluid":True,"version":APP_VERSION}
-        me = getuser_id(int(dic["uid"]))
+        me = getuser_intid(dic["uid"])
     else:
         flash("您未登录，无法管理站点","danger")
         return redirect("/")
@@ -74,7 +74,7 @@ def edit_admin(id):
     dic = {}
     if session.get("logged_in"):
         dic = {"user":session.get("user"),"uid":session.get("uid"),"fluid":True,"version":APP_VERSION}
-        me = getuser_id(int(dic["uid"]))
+        me = getuser_intid(dic["uid"])
     else:
         flash("您未登录，无法管理站点","danger")
         return redirect("/")
@@ -84,7 +84,7 @@ def edit_admin(id):
         return redirect("/")
     dbn = request.args.get("db","user")
     if dbn == "user":
-        user = getuser_id(id)
+        user = getuser_intid(id)
         if user:
             form = Admin_User()
             if form.validate_on_submit():

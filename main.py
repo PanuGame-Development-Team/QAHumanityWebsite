@@ -51,12 +51,7 @@ def login():
     if form.validate_on_submit():
         yxid = form.yxid.data
         password = form.password.data
-        try:
-            user = User.query.get(int(yxid))
-        except ValueError:
-            user = ExUser.query.filter(ExUser.name == yxid).first()
-        except:
-            abort(404)
+        user = getuser_id(yxid)
         if user:
             if check_password_hash(user.passwd,password):
                 session["logged_in"] = True
@@ -81,8 +76,8 @@ def login():
                 db.session.add(newuser)
                 db.session.commit()
                 session["logged_in"] = True
-                session["user"] = res["data"]["userName"]
-                session["uid"] = int(yxid)
+                session["user"] = newuser.realname
+                session["uid"] = newuser.id
                 flash("登录成功","success")
                 return redirect("/")
             else:
@@ -156,7 +151,7 @@ def author():
     else:
         dic = {"version":APP_VERSION}
     if "id" in request.args:
-        author = getuser_id(int(request.args.get("id")))
+        author = getuser_intid(int(request.args.get("id")))
         if author:
             if session.get("user") in TEACHERS:
                 articles = Article.query.filter(Article.author == author.realname).order_by(Article.id.desc()).all()
