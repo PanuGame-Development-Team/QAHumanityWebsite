@@ -1,3 +1,4 @@
+{%import "_macros.html" as macros%}
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,7 +14,7 @@
         {%include "_header.html"%}
         <div class="container{%if fluid%}-fluid{%endif%}" style="margin-top:80px;margin-bottom:50px;">
             {%for category,message in get_flashed_messages(with_categories=true)%}
-            <div class="alert alert-{%if category != "message"%}{{category}}{%else%}primary{%endif%} alert-dismissible fade show" role="alert">
+            <div class="alert alert-{%if category != "message"%}{{category}}{%else%}{{backcolor}}{%endif%} alert-dismissible fade show" role="alert">
                 {{message}}
                 <button type="button" class="close" data-dismiss="alert">
                     <span>&times;</span>

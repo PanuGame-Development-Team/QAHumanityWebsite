@@ -5,7 +5,7 @@
     <div style="max-width:300px;text-align:left;">
         <form action="" method="POST">
             {{wtf.form_field(form.comment)}}
-            <button type="submit" class="btn btn-primary">提交</button>
+            <button type="submit" class="btn btn-{{backcolor}}">提交</button>
             {{ form.hidden_tag() }}
         </form>
     </div>

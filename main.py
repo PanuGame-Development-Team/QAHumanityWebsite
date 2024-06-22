@@ -20,10 +20,9 @@ app.add_template_filter(deltag,"del_tag")
 app.add_template_filter(safe_script,"safe_script")
 @app.route("/",methods=["GET"])
 def index():
+    dic = {i:view_initdic[i] for i in view_initdic}
     if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid"),"version":APP_VERSION}
-    else:
-        dic = {"version":APP_VERSION}
+        dic = {"user":session.get("user"),"uid":session.get("uid"),**dic}
     try:
         id = int(request.args.get("id",-1))
     except ValueError:
@@ -45,6 +44,7 @@ def index():
         abort(404)
 @app.route("/login/",methods=["GET","POST"])
 def login():
+    dic = {i:view_initdic[i] for i in view_initdic}
     if session.get("logged_in"):
         return redirect("/")
     form = LoginForm()
@@ -83,7 +83,7 @@ def login():
             else:
                 flash("登录失败，可能因为密码错误或无法连接云校","danger")
                 return redirect("/login/")
-    return render_template("login.html",form=form,version=APP_VERSION)
+    return render_template("login.html",form=form,**dic)
 @app.route("/logout/",methods=["GET"])
 def logout():
     session.clear()
@@ -91,8 +91,9 @@ def logout():
     return redirect("/")
 @app.route("/write/",methods=["GET","POST"])
 def write():
+    dic = {i:view_initdic[i] for i in view_initdic}
     if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid"),"version":APP_VERSION}
+        dic = {"user":session.get("user"),"uid":session.get("uid"),**dic}
     else:
         return redirect("/login/")
     if request.method == "GET":
@@ -119,14 +120,12 @@ def write():
             author = session.get("user")
             html = ""
             for file in files:
-                fileext = file.filename.strip().split(".")[-1].lower()
-                if fileext in ["jpg","png","jpeg","gif","mp4","mov"]:
-                    uuid = uuid4().hex
-                    file.save(open(f"static/uploads/{uuid}.{fileext}","wb"))
-                    if fileext in ["jpg","png","jpeg","gif"]:
-                        html += f"<img style=\"width:100%;\" src=\"/static/uploads/{uuid}.{fileext}\"/>"
+                webfile = save_file(file,["jpg","png","jpeg","gif","mp4","mov"])
+                if webfile:
+                    if webfile.split(".")[-1] in ["jpg","png","jpeg","gif"]:
+                        html += f"""<img style="width:100%;" src="{webfile}"/>"""
                     else:
-                        html += f"<video controls style=\"width:100%;\" src=\"/static/uploads/{uuid}.{fileext}\"></video>"
+                        html += f"""<video controls style="width:100%;" src="{webfile}"></video>"""
             time = datetime.now()
             article = Article()
             article.title = title
@@ -146,10 +145,9 @@ def write():
     abort(404)
 @app.route("/author/",methods=["GET"])
 def author():
+    dic = {i:view_initdic[i] for i in view_initdic}
     if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid"),"version":APP_VERSION}
-    else:
-        dic = {"version":APP_VERSION}
+        dic = {"user":session.get("user"),"uid":session.get("uid"),**dic}
     if "id" in request.args:
         author = getuser_intid(int(request.args.get("id")))
         if author:
@@ -175,8 +173,9 @@ def recommend():
         abort(404)
 @app.route("/change/",methods=["GET","POST"])
 def change():
+    dic = {i:view_initdic[i] for i in view_initdic}
     if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid"),"version":APP_VERSION}
+        dic = {"user":session.get("user"),"uid":session.get("uid"),**dic}
     else:
         flash("请先登录","warning")
         return redirect("/login/")
@@ -205,17 +204,15 @@ def change():
                 files = request.files.getlist("files")
                 html = ""
                 for file in files:
-                    fileext = file.filename.strip().split(".")[-1].lower()
-                    if fileext in ["jpg","png","jpeg","gif","mp4","mov"]:
-                        uuid = uuid4().hex
-                        file.save(open(f"static/uploads/{uuid}.{fileext}","wb"))
-                        if fileext in ["jpg","png","jpeg","gif"]:
-                            html += f"<img style=\"width:100%;\" src=\"/static/uploads/{uuid}.{fileext}\"/>"
+                    webfile = save_file(file,["jpg","png","jpeg","gif","mp4","mov"])
+                    if webfile:
+                        if webfile.split(".")[-1] in ["jpg","png","jpeg","gif"]:
+                            html += f"""<img style="width:100%;" src="{webfile}"/>"""
                         else:
-                            html += f"<video controls style=\"width:100%;\" src=\"/static/uploads/{uuid}.{fileext}\"></video>"
-                article.title = title
-                article.html = html
-                article.jumimg = jumimg
+                            html += f"""<video controls style="width:100%;" src="{webfile}"></video>"""
+                    article.title = title
+                    article.html = html
+                    article.jumimg = jumimg
             else:
                 abort(404)
             db.session.commit()
@@ -272,10 +269,9 @@ def comment():
     abort(404)
 @app.route("/about/",methods=["GET"])
 def about():
+    dic = {i:view_initdic[i] for i in view_initdic}
     if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid"),"version":APP_VERSION}
-    else:
-        dic = {"version":APP_VERSION}
+        dic = {"user":session.get("user"),"uid":session.get("uid"),**dic}
     return render_template("about.html",**dic,fluid=True)
 if __name__ == "__main__":
     app.run(HOST,PORT,DEBUG)

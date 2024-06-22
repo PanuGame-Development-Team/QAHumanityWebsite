@@ -11,22 +11,14 @@
             <li class="list-group-item">外号标签：<span class="float-right">{{author.nickname}}</span></li>
             {%endif%}
             {%if uid == author.id%}
-            <li class="list-group-item"><a class="btn btn-primary" href="/logout">登出</a><a class="btn btn-primary float-right" href="/edit/">编辑</a></li>
+            <li class="list-group-item"><a class="btn btn-danger" href="/logout">登出</a><a class="btn btn-primary float-right" href="/edit/">编辑</a></li>
             {%endif%}
         </ul>
     </div>
     <div class="col-sm-8">
         <div class="row">
             {%for article in articles%}
-            <div class="col-sm-4">
-                <div class="card mb-3">
-                    <img class="card-img-top" src="{{article.jumimg}}" style="height: 150px;">
-                    <div class="card-body">
-                        <a class="card-title h5" href="/?id={{article.id}}">{{article.title}}</a>{%if article.delete%}<del class="text-danger float-right">已删除</del>{%endif%}<br>
-                        <span class="text-muted float-right">{{article.author}} 于 {{article.time.strftime("%Y/%m/%d %H:%M")}} 发布</span>
-                    </div>
-                </div>
-            </div>
+            {{macros.show_article_card(article,backcolor,150,4)}}
             {%endfor%}
         </div>
     </div>

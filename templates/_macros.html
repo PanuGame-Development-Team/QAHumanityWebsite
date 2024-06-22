@@ -1,0 +1,18 @@
+{% macro show_article_card(article,backcolor,height,size) %}
+<div class="col-sm-{{size}}">
+    <div class="card mb-3">
+        <img class="card-img-top" src="{{article.jumimg}}" style="height: {{height}}px;">
+        <div class="card-body">
+            <a class="card-title h5 text-{{backcolor}}" href="/?id={{article.id}}">{{article.title}}</a>{%if article.delete%}<del class="text-danger float-right">已删除</del>{%endif%}<br>
+            <span class="text-muted float-right">作者：{{article.author}}</span>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+{% macro show_article_brief(article,backcolor) %}
+<li class="list-group-item">
+    <a class="text-{{backcolor}}" href="/?id={{article.id}}"><h3>{{article.title}}</h3></a>
+    <p>{{article.html|del_tag|truncate(30,killwords=True)}}……</p>
+    <span class="text-muted">{{article.author}} 于 {{article.time.strftime("%Y/%m/%d %H:%M")}} 发布</span>
+</li>
+{% endmacro %}

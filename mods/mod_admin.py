@@ -14,8 +14,9 @@ def console():
 @app.route("/data",methods=["GET"])
 @app.route("/data/",methods=["GET"])
 def data():
+    dic = {i:view_initdic[i] for i in view_initdic}
     if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid"),"fluid":True,"version":APP_VERSION}
+        dic = {"user":session.get("user"),"uid":session.get("uid"),"fluid":True,**dic}
         me = getuser_intid(dic["uid"])
     else:
         flash("您未登录，无法管理站点","danger")
@@ -33,8 +34,9 @@ def data():
 @app.route("/admin/",methods=["GET"])
 def admin():
     global msgqueue
+    dic = {i:view_initdic[i] for i in view_initdic}
     if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid"),"fluid":True,"version":APP_VERSION}
+        dic = {"user":session.get("user"),"uid":session.get("uid"),"fluid":True,**dic}
         me = getuser_intid(dic["uid"])
     else:
         flash("您未登录，无法管理站点","danger")
@@ -71,9 +73,9 @@ def admin():
 @app.route("/edit/<int:id>",methods=["GET","POST"])
 @app.route("/edit/<int:id>/",methods=["GET","POST"])
 def edit_admin(id):
-    dic = {}
+    dic = {i:view_initdic[i] for i in view_initdic}
     if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid"),"fluid":True,"version":APP_VERSION}
+        dic = {"user":session.get("user"),"uid":session.get("uid"),"fluid":True,**dic}
         me = getuser_intid(dic["uid"])
     else:
         flash("您未登录，无法管理站点","danger")
@@ -138,4 +140,4 @@ def edit_admin(id):
         flash("无效数据库，退回主页","warning")
         return redirect("/")
     form.process()
-    return render_template(f"mod_admin/db_{dbn}.html",**dic,form=form)
+    return render_template(f"mod_admin/db_{dbn}.html",form=form,**dic)

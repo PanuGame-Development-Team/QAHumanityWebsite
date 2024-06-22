@@ -11,8 +11,9 @@ def index():
     return redirect(url_for("edit.conf"))
 @app.route("/conf",methods=["GET","POST"])
 def conf():
+    dic = {i:view_initdic[i] for i in view_initdic}
     if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid"),"version":APP_VERSION}
+        dic = {"user":session.get("user"),"uid":session.get("uid"),**dic}
     else:
         return redirect("/login/")
     if request.method == "GET":

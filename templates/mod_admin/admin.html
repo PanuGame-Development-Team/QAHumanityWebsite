@@ -1,6 +1,6 @@
 {% extends "_base.html" %}
 {%block contents%}
-{%import "mod_admin/_macros.html" as macros%}
+{%import "mod_admin/_macros.html" as admin_macros%}
 <div class="row">
     <div class="col-sm-9">
         <nav>
@@ -11,7 +11,7 @@
             </div>
         </nav>
         <div>
-            {{macros.render_table(table)|safe_script|safe}}
+            {{admin_macros.render_table(table)|safe_script|safe}}
         </div>
     </div>
     <div class="col-sm-3">

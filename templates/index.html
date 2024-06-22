@@ -9,15 +9,7 @@
         <h3>好文推荐>></h3>
         <div class="row">
             {%for article in recommend%}
-            <div class="col-sm-3">
-                <div class="card mb-3">
-                    <img class="card-img-top" src="{{article.jumimg}}" style="height: 120px;">
-                    <div class="card-body">
-                        <a class="card-title h5" href="/?id={{article.id}}">{{article.title}}</a><br>
-                        <span class="text-muted float-right">作者：{{article.author}}</span>
-                    </div>
-                </div>
-            </div>
+            {{macros.show_article_card(article)}}
             {%endfor%}
         </div>
         <h3>热门文章>></h3>
@@ -27,7 +19,7 @@
                 <div class="card mb-3">
                     <img class="card-img-top" src="{{article.jumimg}}" style="height: 120px;">
                     <div class="card-body">
-                        <a class="card-title h5" href="/?id={{article.id}}">{{article.title}}</a><br>
+                        <a class="card-title h5 text-{{backcolor}}" href="/?id={{article.id}}">{{article.title}}</a><br>
                         <span class="text-muted float-right">作者：{{article.author}}</span>
                     </div>
                 </div>
@@ -41,7 +33,7 @@
                 <div class="card mb-3">
                     <img class="card-img-top" src="{{article.jumimg}}" style="height: 120px;">
                     <div class="card-body">
-                        <a class="card-title h5" href="/?id={{article.id}}">{{article.title}}</a><br>
+                        <a class="card-title h5 text-{{backcolor}}" href="/?id={{article.id}}">{{article.title}}</a><br>
                         <span class="text-muted float-right">作者：{{article.author}}</span>
                     </div>
                 </div>
@@ -53,7 +45,7 @@
         <h3>高产作者>></h3>
         <ul class="list-group">
             {%for author in authors%}
-                <li class="list-group-item"><a class="mr-2" href="/author/?id={{author.id}}">{{author.realname}}</a>{%if author.nickname%}<span class="badge badge-primary" style="font-size:small;">{{author.nickname}}</span>{%endif%}<span class="float-right">{{author.count}}篇</span></li>
+                <li class="list-group-item"><a class="mr-2 text-{{backcolor}}" href="/author/?id={{author.id}}">{{author.realname}}</a>{%if author.nickname%}<span class="badge badge-{{backcolor}}" style="font-size:small;">{{author.nickname}}</span>{%endif%}<span class="float-right">{{author.count}}篇</span></li>
             {%endfor%}
         </ul>
     </div>
