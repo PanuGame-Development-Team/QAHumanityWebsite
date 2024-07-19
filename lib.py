@@ -47,8 +47,6 @@ def yx_login(username, password, captcha_code='', captcha_value=''):
         return {'status': 'error', 'msg': '该账号无身份信息或身份信息不唯一'}
 
     return {'status': 'success', 'data': user_info}
-# def yx_login(username,password):
-#     return {"status":"success","data":{"userName":username}}
 
 def get_captcha_code():
     session = requests.Session()
@@ -71,7 +69,7 @@ def lin(la:list,lb:list):
         if not i in lb:
             return False
     return True
-def tagf(html,themeid):
+def tagf(html:str,themeid:int):
     if themeid == 0:
         theme = "primary"
     elif themeid == 1:
@@ -80,16 +78,12 @@ def tagf(html,themeid):
         theme = "warning"
     elif themeid == 3:
         theme = "success"
-    return html.format(theme=theme)
-def render_markdown(string):
+    return html.replace("{theme}",theme)
+def render_markdown(string:str):
     return markdown(string,extensions=mdmodules,extension_configs=mdconfigs)
-# def deltag(html):
-#     return html.translate({ord(i):None for i in "abcdefghijklmnopqrstuvwxyz1234567890 !-\"'<>/%\{\}=#.:;_"})
 def deltag(html):
     bs = bs4.BeautifulSoup(html,"html.parser")
     return bs.getText()
-def getuser_up(username,password):
-    pass
 def getuser_id(uid):
     user = ExUser.query.filter(ExUser.name == str(uid)).first()
     if not user:
@@ -110,7 +104,7 @@ def save_file(img,allowed):
         img.save(open(os.path.join(ABDIR,f"static/uploads/{uuid}.{fileext}"),"wb"))
         return f"/static/uploads/{uuid}.{fileext}"
     return None
-def safe_script(content):
+def safe_script(content:str):
     bs = bs4.BeautifulSoup(content,"html.parser")
     for script in bs.find_all("script"):
         script.decompose()

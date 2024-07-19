@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime,timedelta
 db = SQLAlchemy()
 class Article(db.Model):
     id = db.Column(db.Integer,primary_key=True)

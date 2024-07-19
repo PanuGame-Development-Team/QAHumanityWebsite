@@ -53,13 +53,22 @@ def login():
         password = form.password.data
         user = getuser_id(yxid)
         if user:
-            if check_password_hash(user.passwd,password):
+            if "HITET" in session and datetime.now() < session["HITET"].replace(tzinfo=None):
+                flash("您的休息时长仍未结束，请稍候再试","danger")
+                return redirect("/login/")
+            elif check_password_hash(user.passwd,password):
+                session.clear()
                 session["logged_in"] = True
                 session["user"] = user.realname
                 session["uid"] = user.id
                 flash("登录成功","success")
                 return redirect("/")
+            elif session.get("HIT",0) > HITMAXCNT:
+                session["HITET"] = (datetime.now() + timedelta(minutes=HITWAITTIME))
+                flash("登录失败，您已经超出了试错最大范围，请%d分钟后重试"%HITWAITTIME,"danger")
+                return redirect("/login/")
             else:
+                session["HIT"] = session.get("HIT",0) + 1
                 flash("登录失败，可能因为密码错误或密码更改（以第一次登录本网站时为准）","danger")
                 return redirect("/login/")
         else:
