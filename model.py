@@ -13,7 +13,7 @@ class Article(db.Model):
     jumimg = db.Column(db.String(64))
     count = db.Column(db.Integer,default=0)
     author = db.Column(db.Unicode(16))
-    time = db.Column(db.DateTime,default=datetime.now())
+    time = db.Column(db.DateTime,default=datetime.now)
     recommend = db.Column(db.Boolean,default=False)
     delete = db.Column(db.Boolean,default=False)
 class User(db.Model):
@@ -34,6 +34,6 @@ class ExUser(db.Model):
 class Comment(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     comment = db.Column(db.Unicode(128))
-    time = db.Column(db.DateTime,default=datetime.now())
+    time = db.Column(db.DateTime,default=datetime.now)
     article = db.Column(db.Integer,db.ForeignKey('article.id'))
     author = db.Column(db.Unicode(16))
