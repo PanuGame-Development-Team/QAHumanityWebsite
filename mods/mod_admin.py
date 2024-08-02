@@ -21,7 +21,7 @@ def data():
     else:
         flash("您未登录，无法管理站点","danger")
         return redirect("/")
-    if not me.realname in TEACHERS:
+    if not me.realname in ADMINISTRATOS:
         msgqueue.push(f"""用户{me.realname}，于{datetime.now().strftime("%Y/%m/%d %H:%M")}时尝试盗取系统信息。""")
         flash("您无权管理该站点，此事已被通报。","danger")
         return redirect("/")
@@ -41,7 +41,7 @@ def admin():
     else:
         flash("您未登录，无法管理站点","danger")
         return redirect("/")
-    if not me.realname in TEACHERS:
+    if not me.realname in ADMINISTRATOS:
         msgqueue.push(f"""用户{me.realname}，于{datetime.now().strftime("%Y/%m/%d %H:%M")}时尝试登录管理站点。""")
         flash("您无权管理该站点，此事已被通报。","danger")
         return redirect("/")
@@ -80,7 +80,7 @@ def edit_admin(id):
     else:
         flash("您未登录，无法管理站点","danger")
         return redirect("/")
-    if not me.realname in TEACHERS:
+    if not me.realname in ADMINISTRATOS:
         msgqueue.push(f"""用户{me.realname}，于{datetime.now().strftime("%Y/%m/%d %H:%M")}时尝试登录管理站点。""")
         flash("您无权管理该站点，此事已被通报。","danger")
         return redirect("/")

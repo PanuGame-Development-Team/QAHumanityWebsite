@@ -37,3 +37,10 @@ class Comment(db.Model):
     time = db.Column(db.DateTime,default=datetime.now)
     article = db.Column(db.Integer,db.ForeignKey('article.id'))
     author = db.Column(db.Unicode(16))
+class Comcom(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    comment = db.Column(db.Unicode(128))
+    time = db.Column(db.DateTime,default=datetime.now)
+    ori_comment_id = db.Column(db.Integer,db.ForeignKey('comment.id'))
+    ori_comment = db.relationship("Comment",backref=db.backref("comments"))
+    author = db.Column(db.Unicode(16))

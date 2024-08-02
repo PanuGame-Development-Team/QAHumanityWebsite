@@ -28,12 +28,12 @@ def index():
     except ValueError:
         abort(404)
     article = Article.query.get(id)
-    if article and (not article.delete or session.get("user") in TEACHERS):
+    if article and (not article.delete or session.get("user") in ADMINISTRATOS):
         Article.query.get(id).count += 1
         db.session.commit()
         newest = Article.query.filter(Article.delete == False).order_by(Article.id.desc()).limit(10).all()
         comments = Comment.query.filter(Comment.article == id).order_by(Comment.id.desc()).limit(20).all()
-        return render_template("page.html",article=article,newest=newest,comments=comments,teachers=TEACHERS,**dic)
+        return render_template("page.html",article=article,newest=newest,comments=comments,teachers=ADMINISTRATOS,**dic)
     elif not "id" in request.args:
         newest = Article.query.filter(Article.delete == False).order_by(Article.id.desc()).limit(12).all()
         hot = Article.query.filter(Article.delete == False).order_by(Article.count.desc()).limit(12).all()
@@ -160,7 +160,7 @@ def author():
     if "id" in request.args:
         author = getuser_intid(int(request.args.get("id")))
         if author:
-            if session.get("user") in TEACHERS:
+            if session.get("user") in ADMINISTRATOS:
                 articles = Article.query.filter(Article.author == author.realname).order_by(Article.id.desc()).all()
             else:
                 articles = Article.query.filter(Article.delete == False).filter(Article.author == author.realname).order_by(Article.id.desc()).all()
@@ -170,7 +170,7 @@ def author():
 def recommend():
     if session.get("logged_in"):
         user = session.get("user")
-        if "id" in request.args and user in TEACHERS:
+        if "id" in request.args and user in ADMINISTRATOS:
             art = Article.query.get(int(request.args.get("id")))
             art.recommend = not art.recommend
             db.session.commit()
@@ -194,7 +194,7 @@ def change():
             article = article if not article.delete else None
         except ValueError:
             abort(404)
-    if article and (article.author == dic["user"] or dic["user"] in TEACHERS):
+    if article and (article.author == dic["user"] or dic["user"] in ADMINISTRATOS):
         if request.method == "GET":
             return render_template("write.html",**dic,basetext=article.html,basetitle=article.title,basejumimg=article.jumimg)
         if "type" in request.form:
@@ -242,7 +242,7 @@ def delete():
             article = article if not article.delete else None
         except ValueError:
             abort(404)
-    if article and (article.author == session.get("user") or session.get("user") in TEACHERS):
+    if article and (article.author == session.get("user") or session.get("user") in ADMINISTRATOS):
         article.delete = True
         User.query.filter(User.realname == article.author).update({"count":User.count - 1})
         ExUser.query.filter(ExUser.realname == article.author).update({"count":ExUser.count - 1})
@@ -275,6 +275,26 @@ def comment():
             db.session.commit()
             flash("评论成功","success")
             return redirect(f"/?id={article.id}")
+        for name in request.form:
+            if name.startswith("comment-"):
+                com = request.form.get(name)
+                name = name.replace("comment-","",1)
+                try:
+                    comid = int(name)
+                    comment = Comment.query.get(comid)
+                    if not comment:
+                        abort(400)
+                except:
+                    abort(400)
+                comcom = Comcom()
+                comcom.ori_comment = comment
+                comcom.ori_comment_id = comid
+                comcom.comment = com
+                comcom.author = session.get("user")
+                db.session.add(comcom)
+                db.session.commit()
+                flash("评论成功","success")
+                return redirect(f"/?id={article.id}")
     abort(404)
 @app.route("/about/",methods=["GET"])
 def about():

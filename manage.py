@@ -4,7 +4,7 @@ import os
 from flask_migrate import Migrate,upgrade,migrate,init,revision
 # from flask_script import Manager,Server
 from model import *
-mig = Migrate(app,db)
+mig = Migrate(app,db,render_as_batch=True)
 with app.app_context():
     if sys.argv[1] == "upgrade":
         upgrade()
@@ -16,3 +16,5 @@ with app.app_context():
         init()
     elif sys.argv[1] == "revision":
         revision()
+    elif sys.argv[1] == "migrate":
+        migrate()
