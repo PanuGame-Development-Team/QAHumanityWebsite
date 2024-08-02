@@ -47,7 +47,7 @@
                 <li class="list-group-item ml-3">
                     <form action="/comment/?id={{article.id}}" method="post" class="form-inline">
                         <div class="w-100" style="display: flex;">
-                            <input type="text" name="comment" placeholder="这一刻的想法，评论一下" class="form-control" style="flex:11;">
+                            <input type="text" name="comment-{{comment.id}}" placeholder="这一刻的想法，评论一下" class="form-control" style="flex:11;">
                             <button type="submit" class="btn btn-{{backcolor}} w-100 ml-3" style="flex:1;">提交</button>
                         </div>
                     </form>
