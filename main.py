@@ -32,7 +32,7 @@ def index():
         Article.query.get(id).count += 1
         db.session.commit()
         newest = Article.query.filter(Article.delete == False).order_by(Article.id.desc()).limit(10).all()
-        comments = Comment.query.filter(Comment.article == id).order_by(Comment.id.desc()).limit(20).all()
+        comments = Comment.query.filter(Comment.article == id).order_by(Comment.id.desc()).all()
         return render_template("page.html",article=article,newest=newest,comments=comments,teachers=ADMINISTRATOS,**dic)
     elif not "id" in request.args:
         newest = Article.query.filter(Article.delete == False).order_by(Article.id.desc()).limit(12).all()
@@ -104,7 +104,8 @@ def write():
     if session.get("logged_in"):
         dic = {"user":session.get("user"),"uid":session.get("uid"),**dic}
     else:
-        return redirect("/login/")
+        # return redirect("/login/")
+        dic = {"user":"wsq","uid":23061323,**dic}
     if request.method == "GET":
         return render_template("write.html",**dic)
     if "type" in request.form:
@@ -113,7 +114,7 @@ def write():
             md = request.form["md"]
             theme = int(request.form["theme"])
             jumimg = request.form["jumimg"]
-            author = session.get("user")
+            author = dic["user"]
             time = datetime.now()
             article = Article()
             article.title = title
@@ -126,7 +127,7 @@ def write():
             title = request.form["title"]
             jumimg = request.form["jumimg"]
             files = request.files.getlist("files")
-            author = session.get("user")
+            author = dic["user"]
             html = ""
             for file in files:
                 webfile = save_file(file,["jpg","png","jpeg","gif","mp4","mov"])

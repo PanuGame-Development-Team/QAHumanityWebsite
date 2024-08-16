@@ -13,6 +13,41 @@
         <div>
             {{admin_macros.render_table(table)|safe_script|safe}}
         </div>
+        <div class="float-right">
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item{%if page==1%} disabled{%endif%}">
+                        <a class="page-link" href="/admin/admin/?db={{current}}&page=1">&laquo;</a>
+                    </li>
+                    {%if page < 3%}
+                        {%set l=1%}
+                        {%if maxpage > 6%}
+                        {%set r=5%}
+                        {%else%}
+                        {%set r=maxpage%}
+                        {%endif%}
+                    {%elif page > maxpage - 3%}
+                        {%if maxpage - 4 < 1%}
+                        {%set l=1%}
+                        {%else%}
+                        {%set l=maxpage - 4%}
+                        {%endif%}
+                        {%set r=maxpage%}
+                    {%else%}
+                        {%set l=page-2%}
+                        {%set r=page+2%}
+                    {%endif%}
+                    {%for i in range(l,r+1)%}
+                    <li class="page-item{%if page == i%} active{%endif%}">
+                        <a class="page-link" href="/admin/admin/?db={{current}}&page={{i}}">{{i}}</a>
+                    </li>
+                    {%endfor%}
+                    <li class="page-item{%if page==maxpage%} disabled{%endif%}">
+                        <a class="page-link" href="/admin/admin/?db={{current}}&page={{maxpage}}">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </div>
     <div class="col-sm-3">
         <ul class="list-group">

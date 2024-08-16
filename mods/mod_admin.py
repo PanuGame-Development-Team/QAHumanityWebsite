@@ -56,20 +56,23 @@ def admin():
         table = [["ID","真实姓名","文章计数","外号标签",""]]
         for i in User.query.paginate(page=page,max_per_page=10).items:
             table.append([i.id,i.realname,i.count,i.nickname,f"""<a class="btn btn-primary" href="/admin/edit/{i.id}/?db={db}">编辑</a>"""])
+            max_page = (User.query.count() + 9) // 10
     elif db == "article":
         table = [["ID","标题","浏览计数","发布时间","推荐","已删除",""]]
         for i in Article.query.paginate(page=page,max_per_page=10).items:
             table.append([i.id,i.title,i.count,i.time.strftime("%Y/%m/%d %H:%M"),i.recommend,i.delete,f"""<a class="btn btn-primary" href="/admin/edit/{i.id}/?db={db}">编辑</a>"""])
+            max_page = (Article.query.count() + 9) // 10
     elif db == "comment":
         table = [["ID","对应文章","评论者","发布时间","内容",""]]
         for i in Comment.query.paginate(page=page,max_per_page=10).items:
             table.append([i.id,i.article,i.author,i.time.strftime("%Y/%m/%d %H:%M"),i.comment,f"""<a class="btn btn-primary" href="/admin/edit/{i.id}/?db={db}">编辑</a>"""])
+            max_page = (Comment.query.count() + 9) // 10
     else:
         flash("无效数据库，退回主页","warning")
         return redirect("/")
     mq = msgqueue.queue[:]
     mq.reverse()
-    return render_template("mod_admin/admin.html",**dic,current=db,msgqueue=mq,table=table)
+    return render_template("mod_admin/admin.html",**dic,current=db,msgqueue=mq,table=table,maxpage=max_page,page=page)
 @app.route("/edit/<int:id>",methods=["GET","POST"])
 @app.route("/edit/<int:id>/",methods=["GET","POST"])
 def edit_admin(id):

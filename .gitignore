@@ -5,3 +5,4 @@ __pycache__/
 /init_db.py
 /static/uploads/*
 /msg.q
+/test.py
