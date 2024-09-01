@@ -302,9 +302,6 @@ def comment():
     abort(404)
 @app.route("/about/",methods=["GET"])
 def about():
-    dic = {i:view_initdic[i] for i in view_initdic}
-    if session.get("logged_in"):
-        dic = {"user":session.get("user"),"uid":session.get("uid"),**dic}
-    return render_template("about.html",**dic,fluid=True)
+    return redirect("https://github.com/PanuGame-Development-Team")
 if __name__ == "__main__":
     app.run(HOST,PORT,DEBUG)
