@@ -18,6 +18,7 @@ app.register_blueprint(mods.mod_admin.app)
 app.add_template_filter(tagf,"tag_format")
 app.add_template_filter(deltag,"del_tag")
 app.add_template_filter(safe_script,"safe_script")
+app.add_template_filter(uidencode,"uidencode")
 @app.route("/",methods=["GET"])
 def index():
     dic = {i:view_initdic[i] for i in view_initdic}
@@ -104,8 +105,7 @@ def write():
     if session.get("logged_in"):
         dic = {"user":session.get("user"),"uid":session.get("uid"),**dic}
     else:
-        # return redirect("/login/")
-        dic = {"user":"wsq","uid":23061323,**dic}
+        return redirect("/login/")
     if request.method == "GET":
         return render_template("write.html",**dic)
     if "type" in request.form:
@@ -159,7 +159,10 @@ def author():
     if session.get("logged_in"):
         dic = {"user":session.get("user"),"uid":session.get("uid"),**dic}
     if "id" in request.args:
-        author = getuser_intid(int(request.args.get("id")))
+        try:
+            author = getuser_intid(int(uiddecode(request.args.get("id"))))
+        except:
+            abort(400)
         if author:
             if session.get("user") in ADMINISTRATOS:
                 articles = Article.query.filter(Article.author == author.realname).order_by(Article.id.desc()).all()

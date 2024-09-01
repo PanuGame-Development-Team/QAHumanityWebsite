@@ -63,6 +63,7 @@ from settings import *
 import bs4
 from model import *
 from uuid import uuid4
+from base64 import b64encode,b64decode
 from werkzeug.security import generate_password_hash,check_password_hash
 def lin(la:list,lb:list):
     for i in la:
@@ -126,3 +127,9 @@ class MsgQueue:
         with open("msg.q","wb") as file:
             self.pickle.dump(self.queue,file)
 msgqueue = MsgQueue()
+
+def uidencode(uid:int|str):
+    suid = str(uid).encode("UTF-8")
+    return b64encode(suid,b"+=").hex().upper()
+def uiddecode(encoded:str):
+    return b64decode(bytes.fromhex(encoded.lower())).decode("UTF-8")
